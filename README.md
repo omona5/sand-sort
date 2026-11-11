@@ -20,7 +20,16 @@ Node.js 22 이상에서 `npm run dev` 실행 후 http://127.0.0.1:4173 에 접�
 - 현재 난이도·레벨·보드·이동 수·시간은 브라우저에 자동 저장됩니다. 되돌리기 기록은 새로고침 시 초기화됩니다.
 - 난이도를 바꾸면 해당 난이도 1레벨을 새로 시작합니다.
 
-## GitHub 비공개 소스 + Cloudflare Pages
+## 현재 배포
+
+- 서비스: https://sand-sort.omona.dev
+- 소스: https://github.com/omona5/sand-sort (Private)
+- 호스팅: Sites의 정적 배포, 도메인/DNS: Cloudflare
+- `.openai/hosting.json`의 `project_id`는 현재 Site와 연결되므로 유지합니다.
+- Cloudflare DNS의 `sand-sort` CNAME은 `custom-domains.chatgpt.site`를 가리키며 DNS only로 설정합니다. 소유권 및 인증 TXT 레코드는 유지합니다.
+- GitHub Actions는 push와 PR에서 테스트·빌드를 수행합니다. GitHub push만으로 Sites 운영 배포가 자동 갱신되지는 않습니다. 변경 후 Sites에 새 버전을 배포해야 합니다.
+
+## 선택 사항: Cloudflare Pages로 호스팅 이전
 
 1. GitHub `omona5/sand-sort` 저장소는 Private으로 유지합니다.
 2. Cloudflare Workers & Pages에서 Pages 프로젝트를 만들고 해당 GitHub 저장소를 연결합니다.
@@ -28,7 +37,7 @@ Node.js 22 이상에서 `npm run dev` 실행 후 http://127.0.0.1:4173 에 접�
 4. Pages 프로젝트의 Custom domains에 `sand-sort.omona.dev`를 추가합니다. 같은 Cloudflare 계정에서 관리하는 영역이면 안내에 따라 DNS를 연결합니다.
 5. HTTPS 인증서와 Custom domain 상태가 Active인지 확인합니다. 소스 저장소의 Private 여부는 서비스 접속 공개 여부와 별개입니다.
 
-`.openai/hosting.json` 은 별도 Sites 미리보기 배포용 설정이며 Cloudflare Pages 직접 배포에는 필요하지 않습니다.
+현재 도메인은 Sites에 연결되어 있습니다. Pages로 이전할 때는 Pages가 제공하는 도메인 연결 절차에 따라 CNAME 대상을 변경해야 합니다. `.openai/hosting.json`은 Cloudflare Pages 직접 배포에는 필요하지 않습니다.
 
 ## 개인정보와 접근성
 

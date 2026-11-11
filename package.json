@@ -1,1 +1,1 @@
-{"name":"sand-sort","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"node scripts/serve.mjs","build":"node scripts/build.mjs","test":"node --test --test-isolation=none"},"engines":{"node":">=22"}}
+{"name":"sand-sort","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"node scripts/serve.mjs","build":"node scripts/build.mjs","test":"node test/engine.test.js"},"engines":{"node":">=22"}}
