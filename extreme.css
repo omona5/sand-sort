@@ -1,0 +1,5 @@
+:root{--indigo:#6576bc;--orange:#df913f;--lime:#b5c85b;--plum:#854a80;--slate:#54747b;--rose:#d09cad;--aqua:#5caeaa;--gold:#aa8742}
+.board.extreme{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px 24px;max-width:600px;align-items:end;padding-top:12px}
+.board.extreme .tube-button{width:100%;min-width:0;padding-left:3px;padding-right:3px}
+.board.extreme .sand-layer::after{content:attr(data-color);position:absolute;inset:0;display:grid;place-items:center;color:#182f36bd;font-size:9px;font-weight:700;text-shadow:0 1px #ffffff50}
+@media(max-width:480px){.board.extreme{max-width:310px;gap:18px 4px}.board.extreme .tube{width:clamp(30px,10vw,47px);height:132px;padding:3px}.board.extreme .sand-stack{height:108px}.board.extreme .sand-layer{height:27px}.board.extreme .sand-layer::after{font-size:8px}.board.extreme .tube-button{gap:10px}.board.extreme .tube-button:before{width:38px}}

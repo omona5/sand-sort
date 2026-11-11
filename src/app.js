@@ -1,6 +1,6 @@
 import {copy,pour,solved,generate,validSave} from './engine.js';
-const $=id=>document.getElementById(id),palette=['sand','coral','sage','blue','lilac'];
-const names=['골드','코랄','세이지','블루','라일락'];
+const $=id=>document.getElementById(id),palette=['sand','coral','sage','blue','lilac','rose','aqua','gold','indigo','orange','lime','plum','slate'];
+const names=['골드','코랄','세이지','블루','라일락','로즈','아쿠아','브론즈','인디고','오렌지','라임','플럼','슬레이트'];
 let state={level:1,difficulty:'easy',board:[],moves:0,elapsed:0},selected=null,history=[],busy=false,sound=false,audio,hintWorker,hintGeneration=0,timerAnchor=Date.now(),active=false;
 try{const saved=JSON.parse(localStorage.getItem('sand-sort-v1'));if(validSave(saved))state=saved;sound=localStorage.getItem('sand-sort-sound')==='true';}catch{}
 if(!state.board.length)state.board=generate(state.level,state.difficulty).board;
@@ -11,6 +11,7 @@ function clock(){const t=elapsed();$('timer').textContent=`${String(Math.floor(t
 function message(text){$('status').textContent=text;}
 function cancelHint(){hintGeneration++;hintWorker?.terminate();hintWorker=null;$('hint').disabled=false;}
 function render(){
+ $('board').classList.toggle('extreme',state.difficulty==='extreme');
  $('board').replaceChildren();
  state.board.forEach((tube,i)=>{
   const button=document.createElement('button');button.className='tube-button';button.dataset.index=i;
@@ -19,12 +20,12 @@ function render(){
   if(selected===i)button.classList.add('selected');
   const complete=tube.length===4&&tube.every(c=>c===tube[0]);if(complete)button.classList.add('complete');
   const glass=document.createElement('span');glass.className='tube';const stack=document.createElement('span');stack.className='sand-stack';
-  tube.forEach(c=>{const layer=document.createElement('span');layer.className='sand-layer';layer.style.setProperty('--color',`var(--${palette[c]})`);stack.append(layer);});
+  tube.forEach(c=>{const layer=document.createElement('span');layer.className='sand-layer';layer.dataset.color=String(c+1).padStart(2,'0');layer.style.setProperty('--color',`var(--${palette[c]})`);stack.append(layer);});
   glass.append(stack);const number=document.createElement('span');number.className='tube-number';number.textContent=String(i+1).padStart(2,'0');
   button.append(glass,number);button.onclick=()=>choose(i);$('board').append(button);
  });
  $('level').textContent=String(state.level).padStart(2,'0');$('moves').textContent=state.moves;$('difficulty').value=state.difficulty;
- $('level-chip').textContent=state.level===1?'첫 번째 숨 고르기':`${state.level}번째 작은 여유`;
+ $('level-chip').textContent=state.difficulty==='extreme'?'EXTREME · 13 COLORS · 15 FLASKS':state.level===1?'첫 번째 숨 고르기':`${state.level}번째 작은 여유`;
  $('undo').disabled=!history.length||busy;const won=solved(state.board);document.querySelector('.game').classList.toggle('won',won);$('next').hidden=!won;$('progress-note').hidden=won;clock();
  if(won)message(`완성! ${state.moves}번의 움직임으로 모든 색을 모았어요.`);
 }
@@ -55,7 +56,8 @@ $('hint').onclick=()=>{
  if(busy||solved(state.board))return;cancelHint();selected=null;render();const generation=hintGeneration;
  $('hint').disabled=true;message('모래의 길을 찾고 있어요…');
  try{hintWorker=new Worker(new URL('./hint-worker.js',import.meta.url),{type:'module'});
- hintWorker.onmessage=({data:path})=>{if(generation!==hintGeneration)return;cancelHint();if(path?.length){const [a,b]=path[0];$('board').children[a].classList.add('hinted');$('board').children[b].classList.add('hinted');message(`${a+1}번 병에서 ${b+1}번 병으로 옮겨보세요.`);}else message('이 상태에서 해결 경로를 찾지 못했어요. 되돌리기나 다시 하기를 이용해보세요.');};
+ const timeout=setTimeout(()=>{if(generation!==hintGeneration)return;cancelHint();message('힌트 탐색 시간이 길어졌어요. 한 수 되돌린 뒤 다시 시도해보세요.');},8000);
+ hintWorker.onmessage=({data:path})=>{clearTimeout(timeout);if(generation!==hintGeneration)return;cancelHint();if(path?.length){const [a,b]=path[0];$('board').children[a].classList.add('hinted');$('board').children[b].classList.add('hinted');message(`${a+1}번 병에서 ${b+1}번 병으로 옮겨보세요.`);}else message('이 상태에서 해결 경로를 찾지 못했어요. 되돌리기나 다시 하기를 이용해보세요.');};
  hintWorker.onerror=()=>{cancelHint();message('힌트를 불러오지 못했어요. 잠시 후 다시 시도해주세요.');};hintWorker.postMessage(state.board);
  }catch{cancelHint();message('이 브라우저에서는 힌트를 지원하지 않아요.');}
 };
